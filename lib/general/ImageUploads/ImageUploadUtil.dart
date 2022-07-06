@@ -4,22 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
-
 import 'package:path/path.dart';
 
 class ImageUploadUtil {
   File? _photo;
   final ImagePicker _picker = ImagePicker();
 
-  Future<Null> cropImage() async {
+  Future<void> cropImage() async {
     CroppedFile? croppedFile = await ImageCropper().cropImage(
-      sourcePath: _photo!.path
+      sourcePath: _photo!.path,
       aspectRatioPresets: [
-      CropAspectRatioPreset.square,
-      CropAspectRatioPreset.ratio3x2,
-      CropAspectRatioPreset.original,
-      CropAspectRatioPreset.ratio4x3,
-      CropAspectRatioPreset.ratio16x9
+        CropAspectRatioPreset.square,
+        CropAspectRatioPreset.ratio3x2,
+        CropAspectRatioPreset.original,
+        CropAspectRatioPreset.ratio4x3,
+        CropAspectRatioPreset.ratio16x9
       ],
       uiSettings: [
         AndroidUiSettings(
@@ -33,6 +32,7 @@ class ImageUploadUtil {
         ),
       ],
     );
+    _photo = croppedFile as File?;
   }
 
   Future imgFromGallery(BuildContext context) async {
@@ -40,9 +40,8 @@ class ImageUploadUtil {
 
     if (pickedFile != null) {
       _photo = File(pickedFile.path);
-      cropImage();
-      uploadFile();
-
+      await cropImage();
+      await uploadFile();
     }
   }
 
@@ -61,11 +60,10 @@ class ImageUploadUtil {
     final destination = 'files/$fileName';
 
     try {
-       final ref = FirebaseStorage.instance
-          .ref(destination)
-          .child('file/');
+      final ref = FirebaseStorage.instance.ref(destination).child('file/');
       await ref.putFile(_photo!);
     } catch (e) {
+      print(e.toString());
       print('error occured');
     }
   }

@@ -1,20 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mycricplay/grounds/grounds_model.dart';
+import 'package:mycricplay/teams/teams_model.dart';
 
-class GroundDetailsForm extends StatefulWidget {
-  final Grounds_model? groundsModelObj;
-  const GroundDetailsForm({Key? key, required this.groundsModelObj})
-      : super(key: key);
+import '../profile/profile_model.dart';
+
+class UserDetailsScreen extends StatefulWidget {
+  final profile_model? modelObj;
+  const UserDetailsScreen({Key? key, required this.modelObj}) : super(key: key);
 
   @override
-  State<GroundDetailsForm> createState() =>
-      _GroundDetailsFormState(groundsModelObj);
+  State<UserDetailsScreen> createState() => _UserDetailsScreen(modelObj);
 }
 
-class _GroundDetailsFormState extends State<GroundDetailsForm> {
+class _UserDetailsScreen extends State<UserDetailsScreen> {
   final _formKey = GlobalKey<FormState>();
-  final Grounds_model? grounds_modelsObj;
+  final profile_model? modelObj;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -25,12 +26,12 @@ class _GroundDetailsFormState extends State<GroundDetailsForm> {
             ),
             appBar: AppBar(
                 leading: IconButton(
-                  icon: Icon(Icons.arrow_back),
+                  icon: const Icon(Icons.arrow_back),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
-                title: const Text('Ground details')),
+                title: const Text('Player details')),
             body: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -38,30 +39,17 @@ class _GroundDetailsFormState extends State<GroundDetailsForm> {
                     child: Form(
                   child: Column(children: [
                     TextFormField(
-                      initialValue: grounds_modelsObj!.groundName,
-                      decoration: InputDecoration(label: Text('Ground name')),
+                      initialValue: modelObj!.firstName,
+                      decoration:
+                          const InputDecoration(label: Text('Team name')),
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return 'Please enter ground name';
+                          return 'Please enter team name';
                         }
                       },
                       onSaved: (val) {
                         setState(() {
-                          grounds_modelsObj?.groundName = val!;
-                        });
-                      },
-                    ),
-                    TextFormField(
-                      initialValue: grounds_modelsObj!.address,
-                      decoration: InputDecoration(label: Text('Address')),
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter the address';
-                        }
-                      },
-                      onSaved: (val) {
-                        setState(() {
-                          grounds_modelsObj?.address = val!;
+                          modelObj?.lastName = val!;
                         });
                       },
                     ),
@@ -71,7 +59,7 @@ class _GroundDetailsFormState extends State<GroundDetailsForm> {
                           final form = _formKey.currentState;
                           if (form!.validate()) {
                             form.save();
-                            grounds_modelsObj?.saveData();
+                            modelObj?.saveData();
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Processing Data')),
                             );
@@ -84,5 +72,5 @@ class _GroundDetailsFormState extends State<GroundDetailsForm> {
             )));
   }
 
-  _GroundDetailsFormState(this.grounds_modelsObj);
+  _UserDetailsScreen(this.modelObj);
 }

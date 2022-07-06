@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutterfire_ui/auth.dart';
 import 'package:mycricplay/authentication/AuthGate.dart';
-import 'package:mycricplay/general/ImageUploads/EditPhotoPage.dart';
+
 import 'package:mycricplay/home/home.dart';
 import 'package:mycricplay/matches/MatchDetails.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +12,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(MaterialApp(
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: true,
       home: MyApp(),
       routes: {'/profile_screen': (context) => const UserProfile_Screen()}));
 }

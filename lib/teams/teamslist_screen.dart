@@ -1,31 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:mycricplay/grounds/grounds_model.dart';
-import 'package:provider/provider.dart';
+
+import 'package:mycricplay/teams/teams_model.dart';
 
 import '../general/ScreenLoading/loading_screen.dart';
-import 'groundlistdetails_screen.dart';
+import 'teamdetails_screen.dart';
 
-class GroundsList extends StatefulWidget {
-  const GroundsList({Key? key}) : super(key: key);
+class TeamsListScreen extends StatefulWidget {
+  const TeamsListScreen({Key? key}) : super(key: key);
 
   @override
-  State<GroundsList> createState() => _GroundsListState();
+  State<TeamsListScreen> createState() => _TeamsListScreen();
 }
 
-class _GroundsListState extends State<GroundsList> {
-  List<Widget> groundList = [];
-
-  @override
-  void initState() {}
-
+class _TeamsListScreen extends State<TeamsListScreen> {
   @override
   Widget build(BuildContext context) {
-    final Stream<QuerySnapshot> _groundsStream =
-        FirebaseFirestore.instance.collection('grounds').snapshots();
-
     return StreamBuilder<QuerySnapshot>(
-        stream: Grounds_model.readData(),
+        stream: TeamsModel.readData(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Text('Something went wrong');
@@ -42,9 +34,8 @@ class _GroundsListState extends State<GroundsList> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => GroundDetailsForm(
-                                groundsModelObj: Grounds_model(
-                                    groundName: "", address: ''))),
+                            builder: (context) => TeamDetails_Screen(
+                                teamsModelObj: TeamsModel.teamsModelNull())),
                       );
                     },
                     child: const Icon(Icons.add),
@@ -63,13 +54,12 @@ class _GroundsListState extends State<GroundsList> {
                     Map<String, dynamic> data =
                         document.data()! as Map<String, dynamic>;
 
-                    Grounds_model grounds_modelObj =
-                        Grounds_model.fromJson(data);
+                    TeamsModel teamsModelObj = TeamsModel.fromJson(data);
 
                     return Dismissible(
-                      key: Key(grounds_modelObj.groundName),
+                      key: Key(teamsModelObj.teamName),
                       onDismissed: (direction) {
-                        Grounds_model.deleteData(grounds_modelObj);
+                        TeamsModel.deleteData(teamsModelObj);
                         // Then show a snackbar.
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Deleted')));
@@ -90,12 +80,12 @@ class _GroundsListState extends State<GroundsList> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => GroundDetailsForm(
-                                    groundsModelObj: grounds_modelObj)),
+                                builder: (context) => TeamDetails_Screen(
+                                    teamsModelObj: teamsModelObj)),
                           );
                         },
-                        title: Text(data['groundName']),
-                        subtitle: Text(data['address']),
+                        title: Text(data['teamName']),
+                        subtitle: Text(data['contactPerson']),
                         trailing: const Icon(Icons.arrow_forward_ios),
                       ),
                     );

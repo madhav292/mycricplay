@@ -5,6 +5,8 @@ import 'package:mycricplay/general/ImageUploads.dart';
 import 'package:mycricplay/grounds/groundslist_screen.dart';
 import 'package:mycricplay/schedules/schedulelist_screen.dart';
 import 'package:mycricplay/profile/profile_screen.dart';
+import 'package:mycricplay/teams/teamslist_screen.dart';
+import 'package:mycricplay/users/userslist_screen.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -18,7 +20,9 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     List<Widget> _pages = <Widget>[
-      const ScheduleList(),
+      const Center(
+        child: Text('Welcome'),
+      ),
       const Icon(
         Icons.camera,
         size: 150,
@@ -66,6 +70,30 @@ class _HomeState extends State<Home> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const GroundsList()),
+                );
+                // Update the state of the app.
+                // ...
+              },
+            ),
+            ListTile(
+              title: const Text('Teams'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const TeamsListScreen()),
+                );
+                // Update the state of the app.
+                // ...
+              },
+            ),
+            ListTile(
+              title: const Text('Players'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const UsersListScreen()),
                 );
                 // Update the state of the app.
                 // ...

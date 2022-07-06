@@ -24,7 +24,8 @@ class profile_model {
         email = json['email'],
         dateOfBirth = json['dateOfBirth'],
         address = json['address'],
-        personnelNumber = json['personnelNumber'];
+        personnelNumber = json['personnelNumber'],
+        uid = json['uid'];
 
   Future<void> saveData() {
     User _loginUser;
@@ -36,6 +37,7 @@ class profile_model {
     return users
         .doc(_loginUser.uid)
         .set({
+          'uid': this.uid,
           'firstName': this.firstName,
           'lastName': this.lastName,
           'mobileNumber': this.mobileNumber,
@@ -50,6 +52,12 @@ class profile_model {
         .catchError((error) => print("Failed to add user: $error"));
   }
 
+  static Stream<QuerySnapshot> readAllUsers() {
+    final Stream<QuerySnapshot> dataStream =
+        FirebaseFirestore.instance.collection('users').snapshots();
+    return dataStream;
+  }
+
   Future<void> readData() async {
     User _loginUser;
     FirebaseAuth auth = FirebaseAuth.instance;
@@ -60,7 +68,7 @@ class profile_model {
       Map<String, dynamic>? data = docSnapshot.data();
 
       this.firstName = data?['firstName'];
-      print(this.firstName);
+      this.uid = data?['uid'];
       this.lastName = data?['lastName'];
       this.mobileNumber = data?['mobileNumber'];
       this.emergencyContact = data?['emergencyContact'];

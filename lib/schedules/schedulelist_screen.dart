@@ -80,7 +80,7 @@ class _ScheduleListState extends State<ScheduleList> {
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
             Text(
-              '4 PM-6 PM'.toUpperCase(),
+              '4 PM'.toUpperCase(),
               style: const TextStyle(
                   fontWeight: FontWeight.bold, fontSize: 15, color: Colors.red),
             ),

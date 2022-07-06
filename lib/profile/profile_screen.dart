@@ -1,13 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:mycricplay/general/ImageUploads/ImageUploadUtil.dart';
-
+import 'dart:io';
 import 'profile_model.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 class UserProfile_Screen extends StatefulWidget {
   const UserProfile_Screen({Key? key}) : super(key: key);
@@ -53,7 +49,6 @@ class _UserProfile_ScreenState extends State<UserProfile_Screen> {
 
   @override
   Widget build(BuildContext context) {
-    print(_profile_model.firstName);
     _read();
     return MaterialApp(
         home: Container(

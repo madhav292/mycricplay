@@ -2,7 +2,6 @@ import 'dart:html';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mycricplay/general/ImageUploads/EditPhotoPage.dart';
 
 import '../../home/home.dart';
 import 'route_names.dart';

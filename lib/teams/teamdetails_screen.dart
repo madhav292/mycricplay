@@ -1,20 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mycricplay/grounds/grounds_model.dart';
+import 'package:mycricplay/teams/teams_model.dart';
 
-class GroundDetailsForm extends StatefulWidget {
-  final Grounds_model? groundsModelObj;
-  const GroundDetailsForm({Key? key, required this.groundsModelObj})
+class TeamDetails_Screen extends StatefulWidget {
+  final TeamsModel? teamsModelObj;
+  const TeamDetails_Screen({Key? key, required this.teamsModelObj})
       : super(key: key);
 
   @override
-  State<GroundDetailsForm> createState() =>
-      _GroundDetailsFormState(groundsModelObj);
+  State<TeamDetails_Screen> createState() => _TeamDetails_Screen(teamsModelObj);
 }
 
-class _GroundDetailsFormState extends State<GroundDetailsForm> {
+class _TeamDetails_Screen extends State<TeamDetails_Screen> {
   final _formKey = GlobalKey<FormState>();
-  final Grounds_model? grounds_modelsObj;
+  final TeamsModel? teamsModelObj;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -25,12 +25,12 @@ class _GroundDetailsFormState extends State<GroundDetailsForm> {
             ),
             appBar: AppBar(
                 leading: IconButton(
-                  icon: Icon(Icons.arrow_back),
+                  icon: const Icon(Icons.arrow_back),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
-                title: const Text('Ground details')),
+                title: const Text('Team details')),
             body: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -38,30 +38,32 @@ class _GroundDetailsFormState extends State<GroundDetailsForm> {
                     child: Form(
                   child: Column(children: [
                     TextFormField(
-                      initialValue: grounds_modelsObj!.groundName,
-                      decoration: InputDecoration(label: Text('Ground name')),
+                      initialValue: teamsModelObj!.teamName,
+                      decoration:
+                          const InputDecoration(label: Text('Team name')),
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return 'Please enter ground name';
+                          return 'Please enter team name';
                         }
                       },
                       onSaved: (val) {
                         setState(() {
-                          grounds_modelsObj?.groundName = val!;
+                          teamsModelObj?.teamName = val!;
                         });
                       },
                     ),
                     TextFormField(
-                      initialValue: grounds_modelsObj!.address,
-                      decoration: InputDecoration(label: Text('Address')),
+                      initialValue: teamsModelObj!.contactPerson,
+                      decoration:
+                          const InputDecoration(label: Text('Contact person')),
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return 'Please enter the address';
+                          return 'Please enter the contact person';
                         }
                       },
                       onSaved: (val) {
                         setState(() {
-                          grounds_modelsObj?.address = val!;
+                          teamsModelObj?.contactPerson = val!;
                         });
                       },
                     ),
@@ -71,7 +73,7 @@ class _GroundDetailsFormState extends State<GroundDetailsForm> {
                           final form = _formKey.currentState;
                           if (form!.validate()) {
                             form.save();
-                            grounds_modelsObj?.saveData();
+                            teamsModelObj?.saveData();
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Processing Data')),
                             );
@@ -84,5 +86,5 @@ class _GroundDetailsFormState extends State<GroundDetailsForm> {
             )));
   }
 
-  _GroundDetailsFormState(this.grounds_modelsObj);
+  _TeamDetails_Screen(this.teamsModelObj);
 }

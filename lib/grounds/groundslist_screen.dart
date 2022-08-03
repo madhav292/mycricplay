@@ -1,5 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import 'package:get/instance_manager.dart';
+import 'package:mycricplay/general/widgets/listtile_widget.dart';
 import 'package:mycricplay/grounds/grounds_model.dart';
 import 'package:provider/provider.dart';
 
@@ -17,15 +20,55 @@ class _GroundsListState extends State<GroundsList> {
   List<Widget> groundList = [];
 
   @override
-  void initState() {}
-
-  @override
   Widget build(BuildContext context) {
-    final Stream<QuerySnapshot> _groundsStream =
-        FirebaseFirestore.instance.collection('grounds').snapshots();
+    List<GroundsModel> groundsModelList;
+    return FutureBuilder(
+      future: GroundsModel.GroundsModelObj().getGroundsList(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const Text(
+            "Something went wrong",
+          );
+        }
+        if (snapshot.connectionState == ConnectionState.done) {
+          groundsModelList = snapshot.data as List<GroundsModel>;
+          return MaterialApp(
+              home: Scaffold(
+            appBar: AppBar(
+                leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            )),
+            body: ListView.separated(
+                padding: const EdgeInsets.all(8),
+                itemCount: groundsModelList.length,
+                separatorBuilder: (BuildContext context, int index) =>
+                    const Divider(),
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    onTap: () {
+                      Get.put(groundsModelList[index]);
+                      Get.to(
+                          GroundDetailsForm(modelObj: groundsModelList[index]));
+                    },
+                    title: Text(groundsModelList[index].groundName),
+                    subtitle: Text(groundsModelList[index].address),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    leading: CircleAvatar(
+                        backgroundImage:
+                            NetworkImage(groundsModelList[index].imageUrl)),
+                  );
+                }),
+          ));
+        }
+        return const Center(child: CircularProgressIndicator());
+      },
+    );
+    /* return StreamBuilder<QuerySnapshot>(
 
-    return StreamBuilder<QuerySnapshot>(
-        stream: Grounds_model.readData(),
+        stream: GroundsModel.readData(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Text('Something went wrong');
@@ -39,13 +82,7 @@ class _GroundsListState extends State<GroundsList> {
               home: Scaffold(
                   floatingActionButton: FloatingActionButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => GroundDetailsForm(
-                                groundsModelObj: Grounds_model(
-                                    groundName: "", address: ''))),
-                      );
+                      Get.to(GroundDetailsForm());
                     },
                     child: const Icon(Icons.add),
                   ),
@@ -63,13 +100,13 @@ class _GroundsListState extends State<GroundsList> {
                     Map<String, dynamic> data =
                         document.data()! as Map<String, dynamic>;
 
-                    Grounds_model grounds_modelObj =
-                        Grounds_model.fromJson(data);
+                    GroundsModel grounds_modelObj =
+                        Get.put(GroundsModel.fromJson(data));
 
                     return Dismissible(
                       key: Key(grounds_modelObj.groundName),
                       onDismissed: (direction) {
-                        Grounds_model.deleteData(grounds_modelObj);
+                        GroundsModel.deleteData(grounds_modelObj);
                         // Then show a snackbar.
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Deleted')));
@@ -87,12 +124,8 @@ class _GroundsListState extends State<GroundsList> {
 
                       child: ListTile(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => GroundDetailsForm(
-                                    groundsModelObj: grounds_modelObj)),
-                          );
+                          snapshot.datad
+                          Get.to(GroundDetailsForm());
                         },
                         title: Text(data['groundName']),
                         subtitle: Text(data['address']),
@@ -100,6 +133,6 @@ class _GroundsListState extends State<GroundsList> {
                       ),
                     );
                   }).toList())));
-        });
+        });*/
   }
 }

@@ -1,18 +1,30 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:get/instance_manager.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-
-import 'package:path/path.dart';
+import 'package:mycricplay/general/ImageUploads/AppFeature.dart';
+import 'package:mycricplay/grounds/grounds_model.dart';
+import 'package:mycricplay/profile/profile_model.dart';
 
 class ImageUploadUtil {
   File? _photo;
   final ImagePicker _picker = ImagePicker();
+  String imageUploadPath;
+  bool doImageCrop;
+  String imageUrl = '';
+  AppFeature appFeature;
 
-  Future<void> cropImage() async {
+  ImageUploadUtil(
+      {required this.imageUploadPath,
+      required this.doImageCrop,
+      required this.appFeature});
+
+  cropImage(XFile? _pickedFile) async {
     CroppedFile? croppedFile = await ImageCropper().cropImage(
-      sourcePath: _photo!.path,
+      sourcePath: _pickedFile!.path,
       aspectRatioPresets: [
         CropAspectRatioPreset.square,
         CropAspectRatioPreset.ratio3x2,
@@ -22,120 +34,101 @@ class ImageUploadUtil {
       ],
       uiSettings: [
         AndroidUiSettings(
-            toolbarTitle: 'Cropper',
+            toolbarTitle: 'Crop image',
             toolbarColor: Colors.deepOrange,
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false),
         IOSUiSettings(
-          title: 'Cropper',
+          title: 'Crop image',
         ),
       ],
     );
-    _photo = croppedFile as File?;
+
+    return XFile(croppedFile!.path);
   }
 
-  Future imgFromGallery(BuildContext context) async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+  Future imgFromGallery() async {
+    XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
 
+    if (doImageCrop) {
+      pickedFile = await cropImage(pickedFile);
+    }
     if (pickedFile != null) {
       _photo = File(pickedFile.path);
-      await cropImage();
-      await uploadFile();
+      imageUrl = await uploadFile();
     }
+    return imageUrl;
   }
 
   Future imgFromCamera() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+    XFile? pickedFile = await _picker.pickImage(source: ImageSource.camera);
 
+    if (doImageCrop) {
+      pickedFile = await cropImage(pickedFile);
+    }
     if (pickedFile != null) {
       _photo = File(pickedFile.path);
-      uploadFile();
+      imageUrl = await uploadFile();
     }
+    return imageUrl;
   }
 
   Future uploadFile() async {
-    if (_photo == null) return;
-    final fileName = basename(_photo!.path);
-    final destination = 'files/$fileName';
+    if (_photo == null) return '';
+    var destination = FirebaseAuth.instance.currentUser?.uid;
 
     try {
-      final ref = FirebaseStorage.instance.ref(destination).child('file/');
-      await ref.putFile(_photo!);
+      File? uploadPhoto;
+      FirebaseStorage storage = FirebaseStorage.instance;
+      Reference ref = storage.ref(imageUploadPath);
+      uploadPhoto = File(_photo!.path);
+      UploadTask uploadTask = ref.putFile(uploadPhoto);
+      await uploadTask.then((res) async {
+        imageUrl = await res.ref.getDownloadURL();
+        updateReferenceUrl();
+      });
     } catch (e) {
-      print(e.toString());
+      return 'error';
+    }
+
+    return imageUrl;
+  }
+
+  Future removeImage(String fileName) async {
+    try {
+      final ref = FirebaseStorage.instance
+          .ref(imageUploadPath)
+          .child(fileName)
+          .delete();
+
+      imageUrl = '';
+      await updateReferenceUrl();
+    } catch (e) {
       print('error occured');
     }
   }
 
-  static Widget getImageUploadWidget(BuildContext context) {
-    ImageUploadUtil imageUploadUtilObj = ImageUploadUtil();
-    return Column(
-      children: <Widget>[
-        const SizedBox(
-          height: 32,
-        ),
-        Center(
-          child: GestureDetector(
-            onTap: () {
-              imageUploadUtilObj._showPicker(context);
-            },
-            child: CircleAvatar(
-              radius: 55,
-              backgroundColor: const Color(0xffFDCF09),
-              child: imageUploadUtilObj._photo != null
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(60),
-                      child: Image.file(
-                        imageUploadUtilObj._photo!,
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.fitHeight,
-                      ),
-                    )
-                  : Container(
-                      decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(50)),
-                      width: 100,
-                      height: 100,
-                      child: Icon(
-                        Icons.camera_alt,
-                        color: Colors.grey[800],
-                      ),
-                    ),
-            ),
-          ),
-        )
-      ],
-    );
+  //Update the image url on model class of the the feature
+  updateReferenceUrl() {
+    if (appFeature == AppFeature.profile) {
+      UserProfileModel profileModel = Get.find();
+      profileModel.imageUrl = imageUrl;
+      profileModel.updateImageUrl();
+    } else if (appFeature == AppFeature.grounds) {
+      GroundsModel groundsModel = Get.find();
+      groundsModel.imageUrl = imageUrl;
+      groundsModel.updateImageUrl();
+    }
   }
 
-  void _showPicker(context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return SafeArea(
-            child: Wrap(
-              children: <Widget>[
-                ListTile(
-                    leading: const Icon(Icons.photo_library),
-                    title: const Text('Gallery'),
-                    onTap: () {
-                      imgFromGallery(context);
-                      Navigator.of(context).pop();
-                    }),
-                ListTile(
-                  leading: const Icon(Icons.photo_camera),
-                  title: const Text('Camera'),
-                  onTap: () {
-                    imgFromCamera();
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-          );
-        });
-  }
+  /* static getImageUrl(context, String imageUploadPath, bool cropImage) async {
+    ImageUploadUtil imageUploadUtil = ImageUploadUtil();
+    imageUploadUtil.doImageCrop = cropImage;
+    imageUploadUtil.imageUploadPath = imageUploadPath;
+
+    imageUploadUtil.showPicker(context);
+    print('after picker');
+    return imageUploadUtil.imageUrl;
+  }*/
 }

@@ -1,24 +1,52 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class Grounds_model {
+class GroundsModel {
   String groundName;
   String address;
+  String imageUrl;
 
-  Grounds_model({required this.groundName, required this.address});
+  List<GroundsModel> groundsModelList = [];
 
-  Grounds_model.fromJson(Map<String, Object?> json)
+  GroundsModel(
+      {required this.groundName,
+      required this.address,
+      required this.imageUrl});
+
+  static GroundsModelObj() {
+    return GroundsModel(imageUrl: ' ', address: '', groundName: '');
+  }
+
+  GroundsModel.fromJson(Map<String, Object?> json)
       : this(
           groundName: json['groundName']! as String,
           address: json['address']! as String,
+          imageUrl: json['imageUrl']! as String,
         );
   Map<String, Object?> toJson() {
     return {
       'groundName': groundName,
       'address': address,
+      'imageUrl': imageUrl,
     };
   }
 
-  static void deleteData(Grounds_model groundModelObj) {
+  Future<void> updateImageUrl() {
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    CollectionReference users =
+        FirebaseFirestore.instance.collection('grounds');
+    // Call the user's CollectionReference to add a new user
+
+    Map<String, String> imageUrlMap = {'imageUrl': imageUrl};
+    return users
+        .doc(groundName)
+        .update(imageUrlMap)
+        .then((value) => print("Data updated"))
+        .catchError((error) => print("Failed to update: $error"));
+  }
+
+  static void deleteData(GroundsModel groundModelObj) {
     FirebaseFirestore.instance
         .collection('grounds')
         .doc(groundModelObj.groundName)
@@ -28,7 +56,20 @@ class Grounds_model {
   static Stream<QuerySnapshot> readData() {
     final Stream<QuerySnapshot> groundsStream =
         FirebaseFirestore.instance.collection('grounds').snapshots();
+
     return groundsStream;
+  }
+
+  Future<List<GroundsModel>> getGroundsList() async {
+    final CollectionReference collectionRef =
+        FirebaseFirestore.instance.collection('grounds');
+    await collectionRef.get().then((querySnapshot) {
+      for (var result in querySnapshot.docs) {
+        Map<String, dynamic> data = result.data() as Map<String, dynamic>;
+        groundsModelList.add(GroundsModel.fromJson(data));
+      }
+    });
+    return groundsModelList;
   }
 
   Future<void> saveData() {
@@ -37,16 +78,15 @@ class Grounds_model {
     // Call the user's CollectionReference to add a new user
     return grounds
         .doc(groundName)
-        .set({'groundName': groundName, 'address': address})
+        .set(toJson())
         .then((value) => print("Ground Added"))
         .catchError((error) => print("Failed to add ground: $error"));
   }
 
   final groundsList = FirebaseFirestore.instance
       .collection('grounds')
-      .withConverter<Grounds_model>(
-        fromFirestore: (snapshot, _) =>
-            Grounds_model.fromJson(snapshot.data()!),
+      .withConverter<GroundsModel>(
+        fromFirestore: (snapshot, _) => GroundsModel.fromJson(snapshot.data()!),
         toFirestore: (Grounds_model, _) => Grounds_model.toJson(),
       );
 }

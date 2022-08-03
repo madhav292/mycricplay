@@ -24,6 +24,7 @@ class _ScheduleListState extends State<ScheduleList> {
     Widget cardSample = Card(
       clipBehavior: Clip.antiAlias,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           ListTile(
             title: const Text('Card title 1'),
@@ -39,24 +40,15 @@ class _ScheduleListState extends State<ScheduleList> {
               style: TextStyle(color: Colors.black.withOpacity(0.6)),
             ),
           ),
-          ButtonBar(
-            alignment: MainAxisAlignment.start,
-            children: [
-              TextButton(
-                onPressed: () {
-                  // Perform some action
-                },
-                child: const Text('ACTION 1'),
+          ElevatedButton(
+            onPressed: () {},
+            child: const Text('RSVP'),
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12), // <-- Radius
               ),
-              TextButton(
-                onPressed: () {
-                  // Perform some action
-                },
-                child: const Text('ACTION 2'),
-              ),
-            ],
-          ),
-          // Image.asset('assets/images/ground.jpeg'),
+            ),
+          )
         ],
       ),
     );
@@ -96,10 +88,6 @@ class _ScheduleListState extends State<ScheduleList> {
       ),
       body: ListView(children: [
         cardSample,
-        scheudlecard,
-        scheudlecard,
-        scheudlecard,
-        scheudlecard
       ]),
     ));
   }

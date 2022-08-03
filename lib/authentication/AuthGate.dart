@@ -38,8 +38,8 @@ class AuthGate extends StatelessWidget {
                 ],
               );
             },
-            providerConfigs: [
-              const EmailProviderConfiguration(),
+            providerConfigs: const [
+              EmailProviderConfiguration(),
             ],
           );
         }

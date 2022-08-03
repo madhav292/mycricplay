@@ -18,7 +18,7 @@ class _UsersListScreen extends State<UsersListScreen> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        stream: profile_model.readAllUsers(),
+        stream: UserProfileModel.readAllUsers(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Text('Something went wrong');
@@ -44,7 +44,7 @@ class _UsersListScreen extends State<UsersListScreen> {
                     Map<String, dynamic> data =
                         document.data()! as Map<String, dynamic>;
 
-                    profile_model modelObj = profile_model.fromJson(data);
+                    UserProfileModel modelObj = UserProfileModel.fromJson(data);
 
                     return ListTile(
                       onTap: () {
@@ -55,7 +55,8 @@ class _UsersListScreen extends State<UsersListScreen> {
                                   UserDetailsScreen(modelObj: modelObj)),
                         );
                       },
-                      leading: CircleAvatar(),
+                      leading: CircleAvatar(
+                          backgroundImage: NetworkImage(modelObj.imageUrl)),
                       title: Text(modelObj.firstName + ' ' + modelObj.lastName),
                       subtitle: Text(modelObj.mobileNumber),
                       trailing: const Icon(Icons.arrow_forward_ios),

@@ -1,12 +1,16 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
+import 'package:image_cropper/image_cropper.dart';
 
 class ImageUploads extends StatefulWidget {
-  ImageUploads({Key? key}) : super(key: key);
+  String imageUrl = '';
+  ImageUploads({Key? key, String? imageUrl}) : super(key: key);
 
   @override
   _ImageUploadsState createState() => _ImageUploadsState();
@@ -18,11 +22,12 @@ class _ImageUploadsState extends State<ImageUploads> {
 
   File? _photo;
   final ImagePicker _picker = ImagePicker();
+  var imageUploadUrl;
 
   Future imgFromGallery() async {
-    final XFile? pickedFile =
-        await _picker.pickImage(source: ImageSource.gallery);
+    XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
 
+    pickedFile = await cropImage(pickedFile);
     setState(() {
       if (pickedFile != null) {
         _photo = File(pickedFile.path);
@@ -39,23 +44,68 @@ class _ImageUploadsState extends State<ImageUploads> {
     setState(() {
       if (pickedFile != null) {
         _photo = File(pickedFile.path);
-        uploadFile();
+        //uploadFile();
       } else {
         print('No image selected.');
       }
     });
   }
 
+  cropImage(XFile? _pickedFile) async {
+    CroppedFile? croppedFile = await ImageCropper().cropImage(
+      sourcePath: _pickedFile!.path,
+      aspectRatioPresets: [
+        CropAspectRatioPreset.square,
+        CropAspectRatioPreset.ratio3x2,
+        CropAspectRatioPreset.original,
+        CropAspectRatioPreset.ratio4x3,
+        CropAspectRatioPreset.ratio16x9
+      ],
+      uiSettings: [
+        AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        IOSUiSettings(
+          title: 'Cropper',
+        ),
+      ],
+    );
+
+    return XFile(croppedFile!.path);
+  }
+
+  Future removeImage() async {
+    if (_photo == null) return;
+    final fileName = basename(_photo!.path);
+    var destination = FirebaseAuth.instance.currentUser?.uid;
+
+    try {
+      final ref = FirebaseStorage.instance.ref(destination);
+    } catch (e) {
+      print('error occured');
+    }
+    setState(() {
+      _photo = null;
+    });
+  }
+
   Future uploadFile() async {
     if (_photo == null) return;
     final fileName = basename(_photo!.path);
-    final destination = 'files/$fileName';
+    var destination = FirebaseAuth.instance.currentUser?.uid;
 
     try {
-      /* final ref = firebase_storage.FirebaseStorage.instance
-          .ref(destination)
-          .child('file/');
-      await ref.putFile(_photo!);*/
+      final ref =
+          FirebaseStorage.instance.ref('ProfileImages/').child('$destination');
+      await ref.putFile(_photo!);
+      var imageUrlLoc = await ref.getDownloadURL();
+
+      setState(() {
+        imageUploadUrl = imageUrlLoc;
+      });
     } catch (e) {
       print('error occured');
     }
@@ -64,13 +114,22 @@ class _ImageUploadsState extends State<ImageUploads> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () async {
+                await uploadFile();
+                Navigator.pop(context, imageUploadUrl);
+              },
+              icon: Icon(Icons.save))
+        ],
+      ),
       body: Column(
         children: <Widget>[
           const SizedBox(
             height: 32,
           ),
-          Center(
+          /*Center(
             child: GestureDetector(
               onTap: () {
                 _showPicker(context);
@@ -101,13 +160,33 @@ class _ImageUploadsState extends State<ImageUploads> {
                       ),
               ),
             ),
-          )
+          ),*/
+          Center(
+            child: GestureDetector(
+              onTap: () {
+                showPicker(context);
+              },
+              child: _photo != null
+                  ? Image.file(_photo!)
+                  : Container(
+                      decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(50)),
+                      width: 100,
+                      height: 100,
+                      child: Icon(
+                        Icons.camera_alt,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  void _showPicker(context) {
+  void showPicker(context) {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext bc) {
@@ -126,6 +205,15 @@ class _ImageUploadsState extends State<ImageUploads> {
                   title: const Text('Camera'),
                   onTap: () {
                     imgFromCamera();
+                    Navigator.of(context).pop();
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.delete),
+                  title: const Text('Remove photo'),
+                  onTap: () {
+                    removeImage();
+
                     Navigator.of(context).pop();
                   },
                 ),

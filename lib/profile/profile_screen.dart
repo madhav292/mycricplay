@@ -1,9 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get/instance_manager.dart';
-import 'package:get/utils.dart';
+
 import 'package:mycricplay/general/ImageUploads/AppFeature.dart';
 import 'package:mycricplay/general/ImageUploads/ImageUploadUtil.dart';
+
+import 'package:mycricplay/profile/ProfileController.dart';
+import '../general/widgets/textfield_widget.dart';
 import 'profile_model.dart';
 import 'package:intl/intl.dart';
 
@@ -15,10 +16,14 @@ class UserProfileScreen extends StatefulWidget {
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
+  late Future<UserProfileModel> _userProfileModel;
   String dropdownValue = 'Male';
   String imagePickOption = 'Gallery';
 
   TextEditingController dateController = TextEditingController();
+  TextEditingController testTextEditingController = TextEditingController();
+
+  ProfileController profileController = ProfileController();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -28,6 +33,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         builder: (BuildContext bc) {
           ImageUploadUtil imageUploadUtil = ImageUploadUtil(
               imageUploadPath: 'ProfileImages/',
+              fileName: '',
               doImageCrop: true,
               appFeature: AppFeature.profile);
           return SafeArea(
@@ -91,7 +97,17 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       fit: BoxFit.cover,
                       width: 800,
                       height: 250, errorBuilder: (context, error, stackTrace) {
-                      return const Text('Error loading image');
+                      return Container(
+                        decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(50)),
+                        width: 600,
+                        height: 240,
+                        child: Icon(
+                          Icons.camera_alt,
+                          color: Colors.grey[800],
+                        ),
+                      );
                     })
                   : Container(
                       decoration: BoxDecoration(
@@ -221,10 +237,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       decoration: const InputDecoration(label: Text('Address')),
       onSaved: (val) {
         setState(() {
+          print('address');
           modelObj.address = val!;
         });
       },
     );
+  }
+
+  void saveEmergency() {
+    print('hello');
   }
 
   Widget saveButtonWidget(UserProfileModel modelObj) {
@@ -243,29 +264,33 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         });
   }
 
-  Widget formWidget(UserProfileModel modelObj) {
+  Widget formWidget(UserProfileModel modelObj, BuildContext context) {
     return SingleChildScrollView(
-      child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: <Widget>[
-                imageWidget(modelObj),
-                firstNameWidget(modelObj),
-                lastNameWidget(modelObj),
-                dateOfBirthWidget(modelObj, context),
-                personnelNumWidget(modelObj),
-                phoneNumberWidget(modelObj),
-                emergencyContactWidget(modelObj),
-                addressWidget(modelObj),
-                saveButtonWidget(modelObj)
-
-                // Add TextFormFields and ElevatedButton here.
-              ],
-            ),
-          )),
-    );
+        child: Container(
+            padding:
+                const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+            child: Form(
+                key: _formKey,
+                child: Column(
+                  children: <Widget>[
+                    AppTextFormField(
+                      textEditingController:
+                          profileController.firstNameController,
+                      inputDecorationText: 'Emergency',
+                      initialValue:
+                          profileController.curUserProfileModel.firstName,
+                      onSaved: saveEmergency,
+                    ),
+                    ElevatedButton(
+                        child: const Text('Save'),
+                        onPressed: () async {
+                          profileController.saveData();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Update successful')),
+                          );
+                        })
+                  ],
+                ))));
   }
 
   @override
@@ -280,32 +305,23 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           ),
           title: const Text('Profile'),
         ),
-        body: FutureBuilder<DocumentSnapshot>(
-            future: UserProfileModel.readCurUserSnapShot(),
-            builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        body: FutureBuilder<UserProfileModel>(
+            future: _userProfileModel,
+            builder: (context, userSnapshot) {
               try {
-                UserProfileModel modelObj;
-                if (snapshot.hasError) {
+                if (userSnapshot.hasError) {
                   return const Text('Something went wrong');
                 }
 
-                if (snapshot.connectionState == ConnectionState.waiting) {
+                if (userSnapshot.connectionState == ConnectionState.waiting) {
                   return const Text("Loading");
                 }
-                if (snapshot.data!.data() == null) {
-                  modelObj = UserProfileModel.userProfileModelNewObj();
-                  modelObj.saveData();
-                }
-                Map<String, dynamic> data =
-                    snapshot.data!.data() as Map<String, dynamic>;
 
-                modelObj = Get.put(UserProfileModel.fromJson(data));
-                //UserProfileModel modelObj =
-                //    UserProfileModel.userProfileModelNewObj();
-                dateController.text = modelObj.dateOfBirth;
+                UserProfileModel? modelObj = userSnapshot.data;
 
-                return formWidget(modelObj);
+                return formWidget(modelObj!, context);
               } catch (error) {
+                print(error.toString());
                 return const Center(child: Text('Something went wrong'));
               }
             }));
@@ -314,6 +330,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   @override
   void initState() {
     super.initState();
+    _userProfileModel = profileController.getCurrentUser();
   }
 
   Future<void> loadData() async {}

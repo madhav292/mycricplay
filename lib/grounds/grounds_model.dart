@@ -32,8 +32,6 @@ class GroundsModel {
   }
 
   Future<void> updateImageUrl() {
-    FirebaseAuth auth = FirebaseAuth.instance;
-
     CollectionReference users =
         FirebaseFirestore.instance.collection('grounds');
     // Call the user's CollectionReference to add a new user

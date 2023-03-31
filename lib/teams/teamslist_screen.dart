@@ -47,7 +47,7 @@ class _TeamsListScreen extends State<TeamsListScreen> {
                           Navigator.pop(context);
                         },
                       ),
-                      title: const Text('Ground List')),
+                      title: const Text('Team List')),
                   body: ListView(
                       children:
                           snapshot.data!.docs.map((DocumentSnapshot document) {

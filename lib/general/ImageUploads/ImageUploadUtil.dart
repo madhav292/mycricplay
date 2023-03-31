@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
@@ -8,11 +7,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mycricplay/general/ImageUploads/AppFeature.dart';
 import 'package:mycricplay/grounds/grounds_model.dart';
 import 'package:mycricplay/profile/profile_model.dart';
+import 'package:path/path.dart';
 
 class ImageUploadUtil {
   File? _photo;
   final ImagePicker _picker = ImagePicker();
   String imageUploadPath;
+  String fileName;
   bool doImageCrop;
   String imageUrl = '';
   AppFeature appFeature;
@@ -20,7 +21,8 @@ class ImageUploadUtil {
   ImageUploadUtil(
       {required this.imageUploadPath,
       required this.doImageCrop,
-      required this.appFeature});
+      required this.appFeature,
+      required this.fileName});
 
   cropImage(XFile? _pickedFile) async {
     CroppedFile? croppedFile = await ImageCropper().cropImage(
@@ -76,12 +78,15 @@ class ImageUploadUtil {
 
   Future uploadFile() async {
     if (_photo == null) return '';
-    var destination = FirebaseAuth.instance.currentUser?.uid;
+
+    final fileName = basename(_photo!.path);
+    var destination = imageUploadPath + fileName;
 
     try {
       File? uploadPhoto;
       FirebaseStorage storage = FirebaseStorage.instance;
-      Reference ref = storage.ref(imageUploadPath);
+
+      Reference ref = storage.ref(destination);
       uploadPhoto = File(_photo!.path);
       UploadTask uploadTask = ref.putFile(uploadPhoto);
       await uploadTask.then((res) async {

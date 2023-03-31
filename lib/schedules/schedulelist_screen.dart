@@ -27,16 +27,45 @@ class _ScheduleListState extends State<ScheduleList> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           ListTile(
-            title: const Text('Card title 1'),
+            title: const Text(
+              'Team A vs Team B',
+              style: TextStyle(fontSize: 30),
+            ),
             subtitle: Text(
-              'Secondary Text',
+              'Husby',
               style: TextStyle(color: Colors.black.withOpacity(0.6)),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
-              'Greyhound divisively hello coldly wonderfully marginally far upon excluding.',
+              'Please proivede your availabilty for practice session',
+              style: TextStyle(color: Colors.black.withOpacity(0.6)),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {},
+            child: const Text('RSVP'),
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12), // <-- Radius
+              ),
+            ),
+          ),
+          ListTile(
+            title: const Text(
+              'Internal Practice Match',
+              style: TextStyle(fontSize: 30),
+            ),
+            subtitle: Text(
+              'Husby',
+              style: TextStyle(color: Colors.black.withOpacity(0.6)),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'Please proivede your availabilty for practice session',
               style: TextStyle(color: Colors.black.withOpacity(0.6)),
             ),
           ),
@@ -84,6 +113,7 @@ class _ScheduleListState extends State<ScheduleList> {
     return MaterialApp(
         home: Scaffold(
       appBar: AppBar(
+
         title: const Text('Schedules'),
       ),
       body: ListView(children: [

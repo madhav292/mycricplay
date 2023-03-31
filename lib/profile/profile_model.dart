@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:mycricplay/profile/profile_ui_controllers.dart';
 
 class UserProfileModel {
   String uid;
@@ -14,6 +15,8 @@ class UserProfileModel {
   String dateOfBirth;
   String email;
   String imageUrl;
+
+  late ProfileUIControllers profileUIControllers;
 
   static userProfileModelNewObj() {
     return UserProfileModel(
@@ -81,6 +84,7 @@ class UserProfileModel {
     CollectionReference users = FirebaseFirestore.instance.collection('users');
     // Call the user's CollectionReference to add a new user
 
+    print(toJson());
     return users
         .doc(_loginUser.uid)
         .set(toJson())

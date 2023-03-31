@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mycricplay/general/ImageUploads/AppFeature.dart';
 import 'package:mycricplay/general/ImageUploads/ImageUploadUtil.dart';
@@ -7,6 +6,7 @@ import 'package:mycricplay/general/ImageUploads/ImageUploadUtil.dart';
 class ImageWidget extends StatelessWidget {
   String imageUrl = '';
   String imageUploadPath = '';
+  String fileName = '';
   AppFeature appFeature;
   bool doImageCrop;
   ImageWidget(
@@ -26,7 +26,8 @@ class ImageWidget extends StatelessWidget {
             ImageUploadUtil imageUploadUtil = ImageUploadUtil(
                 imageUploadPath: imageUploadPath,
                 doImageCrop: doImageCrop,
-                appFeature: appFeature);
+                appFeature: appFeature,
+                fileName: fileName);
             return SafeArea(
               child: Wrap(
                 children: <Widget>[
@@ -78,14 +79,7 @@ class ImageWidget extends StatelessWidget {
           child: Column(
             children: [
               imageUrl != ''
-                  ? CachedNetworkImage(
-                      imageUrl: imageUrl,
-                      fit: BoxFit.cover,
-                      width: 800,
-                      height: 250,
-                      placeholder: (context, url) =>
-                          const CircularProgressIndicator(),
-                    )
+                  ? Image.network(imageUrl)
                   : Container(
                       decoration: BoxDecoration(
                           color: Colors.grey[200],

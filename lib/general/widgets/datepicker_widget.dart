@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:mycricplay/profile/profile_model.dart';
+import 'package:mycricplay/profile/model/ProfileModel.dart';
 import 'package:intl/intl.dart';
 
 class DateWidget extends StatelessWidget {
   TextEditingController dateController = TextEditingController();
-  late UserProfileModel modelObj;
-  DateWidget({Key? key, required UserProfileModel modelObj}) : super(key: key);
+  late ProfileModel modelObj;
+  DateWidget({Key? key, required ProfileModel modelObj}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

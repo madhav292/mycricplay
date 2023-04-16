@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mycricplay/profile/ProfileController.dart';
-import 'package:mycricplay/profile/profile_model.dart';
+import 'package:mycricplay/profile/controller/ProfileController.dart';
+import 'package:mycricplay/profile/model/ProfileModel.dart';
 
-import '../general/ScreenLoading/loading_screen.dart';
+import '../../general/ScreenLoading/loading_screen.dart';
 
 class UsersListScreen extends StatefulWidget {
   const UsersListScreen({Key? key}) : super(key: key);
@@ -16,7 +16,7 @@ class _UsersListScreen extends State<UsersListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<UserProfileModel>>(
+    return FutureBuilder<List<ProfileModel>>(
         future: profileController.getUsersList(),
         builder: (context, userListSnapshot) {
           if (userListSnapshot.hasError) {
@@ -40,14 +40,14 @@ class _UsersListScreen extends State<UsersListScreen> {
                   body: ListView.builder(
                       itemCount: userListSnapshot.data!.length,
                       itemBuilder: (BuildContext context, int index) {
-                        UserProfileModel modelObj =
+                        ProfileModel modelObj =
                             userListSnapshot.data![index];
                         return ListTile(
                           onTap: () {},
-                          leading: CircleAvatar(
+                          leading:  CircleAvatar(
                               backgroundImage: NetworkImage(modelObj.imageUrl)),
                           title: Text(
-                              modelObj.firstName + ' ' + modelObj.lastName),
+                              '${modelObj.firstName} ${modelObj.lastName}'),
                           subtitle: Text(modelObj.mobileNumber),
                           trailing: const Icon(Icons.arrow_forward_ios),
                         );

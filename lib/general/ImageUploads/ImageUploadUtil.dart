@@ -6,7 +6,8 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mycricplay/general/ImageUploads/AppFeature.dart';
 import 'package:mycricplay/grounds/grounds_model.dart';
-import 'package:mycricplay/profile/profile_model.dart';
+import 'package:mycricplay/profile/controller/ProfileController.dart';
+import 'package:mycricplay/profile/model/ProfileModel.dart';
 import 'package:path/path.dart';
 
 class ImageUploadUtil {
@@ -85,12 +86,14 @@ class ImageUploadUtil {
     try {
       File? uploadPhoto;
       FirebaseStorage storage = FirebaseStorage.instance;
-
+print('image upload');
       Reference ref = storage.ref(destination);
       uploadPhoto = File(_photo!.path);
       UploadTask uploadTask = ref.putFile(uploadPhoto);
       await uploadTask.then((res) async {
         imageUrl = await res.ref.getDownloadURL();
+        print('image uploaded');
+        print(appFeature);
         updateReferenceUrl();
       });
     } catch (e) {
@@ -116,10 +119,11 @@ class ImageUploadUtil {
 
   //Update the image url on model class of the the feature
   updateReferenceUrl() {
+
     if (appFeature == AppFeature.profile) {
-      UserProfileModel profileModel = Get.find();
-      profileModel.imageUrl = imageUrl;
-      profileModel.updateImageUrl();
+      ProfileController controller = Get.find<ProfileController>();
+      controller.profileModel.imageUrl = imageUrl;
+      controller.profileModel.updateImageUrl();
     } else if (appFeature == AppFeature.grounds) {
       GroundsModel groundsModel = Get.find();
       groundsModel.imageUrl = imageUrl;

@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:mycricplay/general/ImagePickerExample.dart';
 import 'package:mycricplay/general/ImageUploads.dart';
 import 'package:mycricplay/grounds/groundslist_screen.dart';
-import 'package:mycricplay/profile/profile_model.dart';
+import 'package:mycricplay/profile/model/ProfileModel.dart';
 import 'package:mycricplay/schedules/schedulelist_screen.dart';
 import 'package:mycricplay/teams/teamslist_screen.dart';
-import 'package:mycricplay/users/userslist_screen.dart';
+import 'package:mycricplay/profile/view/ProfileListView.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);

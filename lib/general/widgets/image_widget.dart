@@ -32,7 +32,7 @@ class ImageWidget extends StatelessWidget {
               child: Wrap(
                 children: <Widget>[
                   const Padding(
-                    padding: EdgeInsets.all(10.0),
+                    padding: EdgeInsets.all(5.0),
                     child: Text(
                       'Upload image from',
                       style: TextStyle(fontSize: 20),
@@ -58,8 +58,8 @@ class ImageWidget extends StatelessWidget {
                     color: Colors.black,
                   ),
                   ListTile(
-                      leading: const Icon(Icons.delete),
-                      title: const Text('Remove'),
+                      leading: const Icon(Icons.delete,color: Colors.red,),
+                      title: const Text('Delete',style: TextStyle(color: Colors.red),),
                       onTap: () {
                         imageUploadUtil.removeImage(imageUrl);
                         Navigator.of(context).pop();
@@ -79,13 +79,13 @@ class ImageWidget extends StatelessWidget {
           child: Column(
             children: [
               imageUrl != ''
-                  ? Image.network(imageUrl)
+                  ? Image.network(imageUrl,)
                   : Container(
                       decoration: BoxDecoration(
                           color: Colors.grey[200],
                           borderRadius: BorderRadius.circular(50)),
                       width: 600,
-                      height: 240,
+                      height: 20,
                       child: Icon(
                         Icons.camera_alt,
                         color: Colors.grey[800],

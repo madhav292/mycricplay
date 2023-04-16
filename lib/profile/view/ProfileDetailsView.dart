@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:mycricplay/grounds/grounds_model.dart';
 import 'package:mycricplay/teams/teams_model.dart';
 
-import '../profile/profile_model.dart';
+import '../model/ProfileModel.dart';
 
 class UserDetailsScreen extends StatefulWidget {
-  final UserProfileModel? modelObj;
+  final ProfileModel? modelObj;
   const UserDetailsScreen({Key? key, required this.modelObj}) : super(key: key);
 
   @override
@@ -15,7 +15,7 @@ class UserDetailsScreen extends StatefulWidget {
 
 class _UserDetailsScreen extends State<UserDetailsScreen> {
   final _formKey = GlobalKey<FormState>();
-  final UserProfileModel? modelObj;
+  final ProfileModel? modelObj;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

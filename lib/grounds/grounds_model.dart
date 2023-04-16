@@ -44,11 +44,13 @@ class GroundsModel {
         .catchError((error) => print("Failed to update: $error"));
   }
 
-  static void deleteData(GroundsModel groundModelObj) {
+   Future<void> deleteData(GroundsModel groundModelObj) async {
     FirebaseFirestore.instance
         .collection('grounds')
         .doc(groundModelObj.groundName)
         .delete();
+
+    this.getGroundsList();
   }
 
   static Stream<QuerySnapshot> readData() {

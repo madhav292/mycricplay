@@ -19,8 +19,11 @@ class _GroundDetailsFormState extends State<GroundDetailsForm> {
     return MaterialApp(
         home: Scaffold(
             floatingActionButton: FloatingActionButton(
-              onPressed: () {},
-              child: const Icon(Icons.add),
+              onPressed: () {
+                widget.modelObj.deleteData(widget.modelObj);
+                Navigator.pop(context);
+              },
+              child: const Icon(Icons.delete),
             ),
             appBar: AppBar(
                 leading: IconButton(
@@ -34,6 +37,7 @@ class _GroundDetailsFormState extends State<GroundDetailsForm> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Form(
+                  key: _formKey,
                   child: Column(children: [
                     ImageWidget(
                       imageUrl: widget.modelObj.imageUrl,
@@ -86,7 +90,6 @@ class _GroundDetailsFormState extends State<GroundDetailsForm> {
                           }
                         }),
                   ]),
-                  key: _formKey,
                 ),
               ),
             )));

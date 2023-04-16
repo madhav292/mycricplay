@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import 'package:get/instance_manager.dart';
-import 'package:mycricplay/general/widgets/listtile_widget.dart';
 import 'package:mycricplay/grounds/grounds_model.dart';
-import 'package:provider/provider.dart';
-
-import '../general/ScreenLoading/loading_screen.dart';
 import 'groundlistdetails_screen.dart';
 
 class GroundsList extends StatefulWidget {
@@ -35,6 +29,7 @@ class _GroundsListState extends State<GroundsList> {
           return MaterialApp(
               home: Scaffold(
             appBar: AppBar(
+              title: Text('Grounds'),
                 leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {

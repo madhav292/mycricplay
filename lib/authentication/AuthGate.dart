@@ -18,25 +18,8 @@ class AuthGate extends StatelessWidget {
         if (!snapshot.hasData) {
           return SignInScreen(
             headerBuilder: (context, constraints, _) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: const [
-                  Center(
-                    child: Text('Stockholm Titans',
-                        style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 40,
-                            fontWeight: FontWeight.bold)),
-                  ),
-                  Center(
-                    child: Text('Cricket Club',
-                        style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold)),
-                  ),
-                ],
-              );
+              return Image.asset("assets/images/titans_logo.jpeg");
+
             },
             providerConfigs: const [
               EmailProviderConfiguration(),

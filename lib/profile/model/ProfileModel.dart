@@ -1,9 +1,11 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:mycricplay/profile/profile_ui_controllers.dart';
 
-class UserProfileModel {
+
+class ProfileModel {
   String uid;
   String firstName;
   String lastName;
@@ -16,10 +18,8 @@ class UserProfileModel {
   String email;
   String imageUrl;
 
-  late ProfileUIControllers profileUIControllers;
-
   static userProfileModelNewObj() {
-    return UserProfileModel(
+    return ProfileModel(
         uid: '',
         firstName: '',
         lastName: '',
@@ -33,7 +33,7 @@ class UserProfileModel {
         imageUrl: '');
   }
 
-  UserProfileModel(
+  ProfileModel(
       {required this.uid,
       required this.firstName,
       required this.lastName,
@@ -46,7 +46,7 @@ class UserProfileModel {
       required this.email,
       required this.imageUrl});
 
-  UserProfileModel.fromJson(Map<String, Object?> json)
+  ProfileModel.fromJson(Map<String, Object?> json)
       : this(
           uid: json['uid'] as String,
           firstName: json['firstName'] as String,
@@ -93,15 +93,16 @@ class UserProfileModel {
   }
 
   Future<void> updateImageUrl() {
-    User _loginUser;
+    User loginUser;
     FirebaseAuth auth = FirebaseAuth.instance;
-    _loginUser = FirebaseAuth.instance.currentUser!;
+    loginUser = FirebaseAuth.instance.currentUser!;
     CollectionReference users = FirebaseFirestore.instance.collection('users');
     // Call the user's CollectionReference to add a new user
 
     Map<String, String> imageUrlMap = {'imageUrl': imageUrl};
+    print(imageUrlMap);
     return users
-        .doc(_loginUser.uid)
+        .doc(loginUser.uid)
         .update(imageUrlMap)
         .then((value) => print("Profile updated"))
         .catchError((error) => print("Failed to add user: $error"));
@@ -124,11 +125,11 @@ class UserProfileModel {
   }
 
   Future<void> readData() async {
-    User _loginUser;
+    User loginUser;
     FirebaseAuth auth = FirebaseAuth.instance;
-    _loginUser = FirebaseAuth.instance.currentUser!;
+    loginUser = FirebaseAuth.instance.currentUser!;
     var collection = FirebaseFirestore.instance.collection('users');
-    var docSnapshot = await collection.doc(_loginUser.uid).get();
+    var docSnapshot = await collection.doc(loginUser.uid).get();
     if (docSnapshot.exists) {
       Map<String, dynamic>? data = docSnapshot.data();
 

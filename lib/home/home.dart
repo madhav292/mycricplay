@@ -4,7 +4,7 @@ import 'package:mycricplay/general/ImagePickerExample.dart';
 import 'package:mycricplay/general/ImageUploads.dart';
 import 'package:mycricplay/grounds/groundslist_screen.dart';
 import 'package:mycricplay/profile/model/ProfileModel.dart';
-import 'package:mycricplay/schedules/schedulelist_screen.dart';
+import 'package:mycricplay/schedules/view/schedulelist_screen.dart';
 import 'package:mycricplay/teams/teamslist_screen.dart';
 import 'package:mycricplay/profile/view/ProfileListView.dart';
 

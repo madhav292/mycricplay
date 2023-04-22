@@ -129,42 +129,44 @@ class UserProfileScreen extends GetView<ProfileController> {
     ProfileController controller = Get.put(ProfileController());
 
 
-    return Scaffold(
-      bottomNavigationBar:  ElevatedButton(
-          child: const Text('Save'),
-          onPressed: () {
-            controller.saveData();
-          }),
-        appBar: AppBar(
-
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+    return SafeArea(
+      child: Scaffold(
+        bottomNavigationBar:  ElevatedButton(
+            child: const Text('Save'),
             onPressed: () {
-              controller.onClose();
-              Navigator.pop(context);
-            },
+              controller.saveData();
+            }),
+          appBar: AppBar(
+
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                controller.onClose();
+                Navigator.pop(context);
+              },
+            ),
+            title: const Text('Profile'),
           ),
-          title: const Text('Profile'),
-        ),
-        body: FutureBuilder<ProfileModel>(
-            future: controller.getCurrentUser(),
-            builder: (context, userSnapshot) {
-              try {
-                if (userSnapshot.hasError) {
-                  print(userSnapshot.error.toString());
-                  return const Text('Something went wrong');
+          body: FutureBuilder<ProfileModel>(
+              future: controller.getCurrentUser(),
+              builder: (context, userSnapshot) {
+                try {
+                  if (userSnapshot.hasError) {
+                    print(userSnapshot.error.toString());
+                    return const Text('Something went wrong');
+                  }
+
+                  if (userSnapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: Text("Loading"));
+                  }
+
+
+                  return formWidget(controller.profileModel!, context, controller);
+                } catch (error) {
+                  print(error.toString());
+                  return const Center(child: Text('Something went wrongs'));
                 }
-
-                if (userSnapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: Text("Loading"));
-                }
-
-
-                return formWidget(controller.profileModel!, context, controller);
-              } catch (error) {
-                print(error.toString());
-                return const Center(child: Text('Something went wrongs'));
-              }
-            }));
+              })),
+    );
   }
 }

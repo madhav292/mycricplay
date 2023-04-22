@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:mycricplay/profile/controller/ProfileController.dart';
 import 'package:mycricplay/profile/model/ProfileModel.dart';
+import 'package:mycricplay/profile/view/ProfileReadOnlyView.dart';
 
 import '../../general/ScreenLoading/loading_screen.dart';
 
@@ -28,7 +30,9 @@ class _UsersListScreen extends State<UsersListScreen> {
           }
 
           return MaterialApp(
+            debugShowCheckedModeBanner: false,
               home: Scaffold(
+
                   appBar: AppBar(
                       leading: IconButton(
                         icon: const Icon(Icons.arrow_back),
@@ -43,7 +47,13 @@ class _UsersListScreen extends State<UsersListScreen> {
                         ProfileModel modelObj =
                             userListSnapshot.data![index];
                         return ListTile(
-                          onTap: () {},
+                          onTap: () {
+                            Get.put(userListSnapshot.data![index]);
+
+                            Get.to(ProfileReadOnlyView());
+
+
+                          },
                           leading:  CircleAvatar(
                               backgroundImage: NetworkImage(modelObj.imageUrl)),
                           title: Text(

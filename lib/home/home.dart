@@ -33,6 +33,8 @@ class _HomeState extends State<Home> {
       ),
     ];
     return Scaffold(
+
+
       drawer: Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
@@ -58,7 +60,7 @@ class _HomeState extends State<Home> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ScheduleList()),
+                  MaterialPageRoute(builder: (context) => ScheduleList()),
                 );
                 // Update the state of the app.
                 // ...
@@ -115,7 +117,7 @@ class _HomeState extends State<Home> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ImagePickerExample()),
+                  MaterialPageRoute(builder: (context) => const ImagePickerExample()),
                 );
                 // Update the state of the app.
                 // ...
@@ -134,9 +136,10 @@ class _HomeState extends State<Home> {
         ),
       ),
       body:
-          const Center(child: ScheduleList() //_pages.elementAt(_selectedIndex),
+           Center(child: Container(child: const Text('Welcome',style: TextStyle(fontSize:30),),) //_pages.elementAt(_selectedIndex),
               ),
       appBar: AppBar(
+
         title: const Text('Stockholm Titans'),
       ),
       bottomNavigationBar: BottomNavigationBar(

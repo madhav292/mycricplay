@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:mycricplay/grounds/grounds_model.dart';
 import 'package:mycricplay/schedules/models/schedulemodel.dart';
 
 class SchedulesController extends GetxController {
@@ -15,6 +16,8 @@ class SchedulesController extends GetxController {
 
   List<ScheduleModel> schedulesModelList = [];
   ScheduleModel model = ScheduleModel.getEmptyObject();
+
+  List<GroundsModel> groundsModelList = [];
 
   void setDataToModel() {
     model.date = dateController.value.text;
@@ -50,7 +53,9 @@ class SchedulesController extends GetxController {
         }
       });
     } catch (exception) {
-    } finally {}
+    }
+    finally {}
+    print('called');
     print(schedulesModelList);
 
     return schedulesModelList;
@@ -77,6 +82,8 @@ class SchedulesController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
-   // await getSchedulesList();
+    GroundsModel groundsModel = GroundsModel.GroundsModelObj();
+   groundsModelList = await  groundsModel.getGroundsList();
+
   }
 }

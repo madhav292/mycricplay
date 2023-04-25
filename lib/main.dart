@@ -1,15 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:mycricplay/authentication/AuthGate.dart';
-import 'package:mycricplay/general/ImageUploads/MyCustomForm.dart';
-import 'package:mycricplay/general/ImageUploads/MyImageUploader.dart';
-import 'package:mycricplay/grounds/groundslist_screen.dart';
-import 'package:mycricplay/home/ProductList.dart';
-import 'package:mycricplay/home/home.dart';
 
 import 'package:mycricplay/matches/MatchDetails.dart';
 import 'package:flutter/material.dart';
-import 'package:mycricplay/products/Products.dart';
 import 'package:mycricplay/profile/view/ProfileView.dart';
 import 'firebase_options.dart';
 

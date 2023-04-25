@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mycricplay/profile/model/ProfileModel.dart';
 
+
+
 class ProfileController extends GetxController {
   final GlobalKey<FormState> profileFormKey = GlobalKey<FormState>();
 
@@ -18,6 +20,7 @@ class ProfileController extends GetxController {
 
   var profileList = [];
   late ProfileModel profileModel;
+
   late List<ProfileModel> profileModelList = [];
 
   Future<ProfileModel> getCurrentUser() async {

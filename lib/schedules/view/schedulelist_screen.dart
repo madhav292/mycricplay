@@ -1,39 +1,32 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:mycricplay/general/ScreenLoading/loading_screen.dart';
+import 'package:mycricplay/grounds/grounds_model.dart';
 import 'package:mycricplay/schedules/controllers/schedulescontroller.dart';
 import 'package:mycricplay/schedules/models/schedulemodel.dart';
 import 'package:mycricplay/schedules/view/SechedulesView.dart';
 
 import '../../matches/MatchDetails.dart';
 
-class ScheduleList extends StatefulWidget {
-  const ScheduleList({Key? key}) : super(key: key);
+class ScheduleList extends StatelessWidget {
+   ScheduleList({Key? key}) : super(key: key);
 
-  @override
-  State<ScheduleList> createState() => _ScheduleListState();
-}
-
-class _ScheduleListState extends State<ScheduleList> {
   late List<MatchDetails> listItems;
+
   late SchedulesController controller;
 
+   List<GroundsModel> groundsModelList = [];
 
-  @override
-  void initState() {
-    controller = Get.put(SchedulesController());
-  }
 
-  @override
-  void dispose() {
-    controller.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
+    controller = Get.put(SchedulesController());
+
 
 
     Widget cardSample(ScheduleModel model) {
@@ -76,6 +69,18 @@ class _ScheduleListState extends State<ScheduleList> {
               ),
             ),
 
+            SingleChildScrollView(scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [ Text('In:    '),
+                 ],
+              ),
+            ),
+            Row(
+              children: [ Text('Out: '),
+                Icon(Icons.person),Icon(Icons.person),Icon(Icons.person)],
+            )
+
+
           ],
         ),
       );
@@ -88,7 +93,7 @@ class _ScheduleListState extends State<ScheduleList> {
         home: Scaffold(
           floatingActionButton: IconButton(
             iconSize: 50,
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             onPressed: () {
               Get.to(SchedulesView());
             },
@@ -122,4 +127,4 @@ class _ScheduleListState extends State<ScheduleList> {
         ),
       );
     }
-  }
+}

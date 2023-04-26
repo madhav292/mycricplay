@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:mycricplay/grounds/grounds_model.dart';
+import 'package:mycricplay/schedules/controllers/SearchGround.dart';
 import 'package:mycricplay/schedules/controllers/schedulescontroller.dart';
 import 'package:mycricplay/utils/CustomDateTimeUtil.dart';
 
@@ -119,10 +120,24 @@ class SchedulesView extends StatelessWidget {
                   },
                 ),
                 TextFormField(
+
                   controller: controller.groundNameController,
-                  decoration: const InputDecoration(
+
+                  decoration:  InputDecoration(
                       label: Text('Ground'),
-                      prefixIcon: Icon(Icons.location_on_outlined)),
+                      prefixIcon: Icon(Icons.location_on_outlined),
+                  suffixIcon: IconButton(icon: Icon(Icons.search,),onPressed: () async {
+
+                    final String? selected = await showSearch<String>(
+                      context: context,
+                      delegate: MySearchDelegate(),
+                    );
+                    if (selected != null) {
+                      // TODO: Handle selected result
+                    }
+
+                  },),),
+
                   onSaved: (value) {
                     controller.model.groundName = value!;
                   },
@@ -171,4 +186,8 @@ class SchedulesView extends StatelessWidget {
       ),
     );
   }
+
+
+
+
 }

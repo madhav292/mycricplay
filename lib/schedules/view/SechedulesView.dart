@@ -3,15 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
-import 'package:mycricplay/grounds/grounds_model.dart';
 import 'package:mycricplay/schedules/controllers/SearchGround.dart';
 import 'package:mycricplay/schedules/controllers/schedulescontroller.dart';
+import 'package:mycricplay/teams/TeamSearch.dart';
 import 'package:mycricplay/utils/CustomDateTimeUtil.dart';
 
 class SchedulesView extends StatelessWidget {
   late SchedulesController controller;
-
-  List<String> list = <String>['One', 'Two', 'Three', 'Four'];
 
   SchedulesView({Key? key}) : super(key: key);
 
@@ -120,24 +118,25 @@ class SchedulesView extends StatelessWidget {
                   },
                 ),
                 TextFormField(
-
                   controller: controller.groundNameController,
-
-                  decoration:  InputDecoration(
-                      label: Text('Ground'),
-                      prefixIcon: Icon(Icons.location_on_outlined),
-                  suffixIcon: IconButton(icon: Icon(Icons.search,),onPressed: () async {
-
-                    final String? selected = await showSearch<String>(
-                      context: context,
-                      delegate: MySearchDelegate(),
-                    );
-                    if (selected != null) {
-                      // TODO: Handle selected result
-                    }
-
-                  },),),
-
+                  decoration: InputDecoration(
+                    label: Text('Ground'),
+                    prefixIcon: Icon(Icons.location_on_outlined),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        Icons.search,
+                      ),
+                      onPressed: () async {
+                        final String? selected = await showSearch<String>(
+                          context: context,
+                          delegate: MySearchDelegate(),
+                        );
+                        if (selected != null) {
+                          controller.groundNameController.text = selected;
+                        }
+                      },
+                    ),
+                  ),
                   onSaved: (value) {
                     controller.model.groundName = value!;
                   },
@@ -148,31 +147,60 @@ class SchedulesView extends StatelessWidget {
                   },
                 ),
                 TextFormField(
+                  controller: controller.teamANameController,
+                  decoration:  InputDecoration(
+                      label: Text('Team A'),
+                      prefixIcon: Icon(Icons.person),
+                    suffixIcon: IconButton(onPressed: () async {
 
-                  controller: controller.teamNameController,
-                  decoration: const InputDecoration(
-                      label: Text('Playing against'),
-                      prefixIcon: Icon(Icons.person)),
+                      final String? selected = await showSearch<String>(
+                        context: context,
+                        delegate: TeamSearch(),
+                      );
+                      if (selected != null) {
+                        controller.teamANameController.text = selected;
+                      }
+
+                    }, icon: Icon(Icons.search))
+
+                  ),
                   onSaved: (value) {
-                    controller.model.teamName = value!;
+                    controller.model.teamAName = value!;
                   },
                   validator: (value) {
-                    if (value!.isEmpty) {
+                   /* if (value!.isEmpty) {
                       return 'Please enter Team name';
-                    }
+                    }*/
                   },
                 ),
-                DropdownButton(
-                  hint: Text('Select ground'),
+                TextFormField(
+                  controller: controller.teamBNameController,
+                  decoration:  InputDecoration(
+                      label: Text('Team B'),
+                      prefixIcon: Icon(Icons.person),
+                      suffixIcon: IconButton(onPressed: () async {
 
-                    isExpanded: true,
-                    items: controller.groundsModelList
-                        .map((e) => DropdownMenuItem(
-                            child: Text(e.groundName), value: e.groundName))
-                        .toList(),
-                    onChanged: (value) {
-                      controller.model.teamName = value.toString();
-                    }),
+                        final String? selected = await showSearch<String>(
+                          context: context,
+                          delegate: TeamSearch(),
+                        );
+                        if (selected != null) {
+                          controller.teamBNameController.text = selected;
+                        }
+
+                      }, icon: Icon(Icons.search))
+
+                  ),
+                  onSaved: (value) {
+                    controller.model.teamAName = value!;
+                  },
+                  validator: (value) {
+                   /* if (value!.isEmpty) {
+                      return 'Please enter Team name';
+                    }*/
+                  },
+                ),
+
                 ElevatedButton(
                   onPressed: () {
                     controller.saveData();
@@ -186,8 +214,4 @@ class SchedulesView extends StatelessWidget {
       ),
     );
   }
-
-
-
-
 }

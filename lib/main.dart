@@ -1,8 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
-import 'package:mycricplay/authentication/AuthGate.dart';
-
-import 'package:mycricplay/matches/MatchDetails.dart';
+import 'package:mycricplay/authentication/services/authgate.dart';
 import 'package:flutter/material.dart';
 import 'package:mycricplay/profile/view/ProfileView.dart';
 import 'firebase_options.dart';
@@ -13,22 +11,21 @@ Future<void> main() async {
   runApp(GetMaterialApp(
 
     theme: ThemeData(brightness: Brightness.light),
-      darkTheme: ThemeData(brightness: Brightness.dark),
+      darkTheme: ThemeData(brightness: Brightness.dark,
+      useMaterial3: true),
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
-      home: MyApp(),
+      home: const MyApp(),
       routes: {'/profile_screen': (context) => const UserProfileScreen()}));
 }
 
 class MyApp extends StatelessWidget {
-  List<MatchDetails> listItems = List<MatchDetails>.generate(100,
-      (i) => MatchDetails("Match $i", "14/04/2022", "9 AM - 2 PM", "Husby"));
 
-  MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return AuthGate();
+    return const AuthGate();
   }
 }

@@ -1,8 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutterfire_ui/auth.dart';
-import 'package:mycricplay/home/home.dart';
+import 'package:mycricplay/authentication/screens/login_screen.dart';
+
+import '../../home/homescreen.dart';
+
+
+
+
+
+
 
 class AuthGate extends StatelessWidget {
   const AuthGate({Key? key}) : super(key: key);
@@ -16,19 +23,11 @@ class AuthGate extends StatelessWidget {
       builder: (context, snapshot) {
         // User is not signed in
         if (!snapshot.hasData) {
-          return SignInScreen(
-            headerBuilder: (context, constraints, _) {
-              return Image.asset("assets/images/titans_logo.jpeg");
-
-            },
-            providerConfigs: const [
-              EmailProviderConfiguration(),
-            ],
-          );
+          return const LoginScreen();
         }
 
         // Render your application if authenticated
-        return const Home();
+        return  const HomeScreen();
       },
     );
   }

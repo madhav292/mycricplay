@@ -24,11 +24,13 @@ class ProfileController extends GetxController {
   late List<ProfileModel> profileModelList = [];
 
   Future<ProfileModel> getCurrentUser() async {
+
+    print(FirebaseAuth.instance.currentUser?.uid);
     DocumentSnapshot docSnapShot = await FirebaseFirestore.instance
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser?.uid)
         .get();
-
+print(docSnapShot.data());
     Map<String, dynamic> data = docSnapShot.data() as Map<String, dynamic>;
 
     profileModel = ProfileModel.fromJson(data);

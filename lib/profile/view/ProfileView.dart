@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mycricplay/general/widgets/image_widget.dart';
+import 'package:mycricplay/general/widgets/textformfield_widget.dart';
 import 'package:mycricplay/profile/controller/ProfileController.dart';
 import '../../general/ImageUploads/AppFeature.dart';
 import '../model/ProfileModel.dart';
@@ -19,13 +20,16 @@ class UserProfileScreen extends GetView<ProfileController> {
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 key: controller.profileFormKey,
                 child: Column(children: <Widget>[
-
-                  ImageWidget(
-                    imageUrl: modelObj.imageUrl   ,
-                    appFeature: AppFeature.profile,
-                    imageUploadPath: 'Profile/',
-                    doImageCrop: false,
+                  (modelObj.imageUrl == null)
+                      ? ImageWidget(
+                          imageUrl: modelObj.imageUrl,
+                          appFeature: AppFeature.profile,
+                          imageUploadPath: 'Profile/',
+                          doImageCrop: false,
+                        )
+                      :  const CircleAvatar(radius: 120,child: Icon(Icons.person,size: 120,),
                   ),
+                  TextFormFieldWidget(hintText: 'First name', onChanged: (value){}, labelText: 'First name',controller: controller.firstNameController,),
                   TextFormField(
                     controller: controller.firstNameController,
                     decoration:
@@ -120,7 +124,6 @@ class UserProfileScreen extends GetView<ProfileController> {
                       controller.profileModel.personnelNumber = value!;
                     },
                   ),
-
                 ]))));
   }
 
@@ -128,16 +131,14 @@ class UserProfileScreen extends GetView<ProfileController> {
   Widget build(BuildContext context) {
     ProfileController controller = Get.put(ProfileController());
 
-
     return SafeArea(
       child: Scaffold(
-        bottomNavigationBar:  ElevatedButton(
-            child: const Text('Save'),
-            onPressed: () {
-              controller.saveData();
-            }),
+          bottomNavigationBar: ElevatedButton(
+              child: const Text('Save'),
+              onPressed: () {
+                controller.saveData();
+              }),
           appBar: AppBar(
-
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
@@ -160,8 +161,8 @@ class UserProfileScreen extends GetView<ProfileController> {
                     return const Center(child: Text("Loading"));
                   }
 
-
-                  return formWidget(controller.profileModel!, context, controller);
+                  return formWidget(
+                      controller.profileModel!, context, controller);
                 } catch (error) {
                   print(error.toString());
                   return const Center(child: Text('Something went wrongs'));

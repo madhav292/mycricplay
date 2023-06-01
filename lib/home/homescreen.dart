@@ -1,5 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:mycricplay/authentication/screens/login_screen.dart';
+import 'package:mycricplay/authentication/services/authservice.dart';
 import 'package:mycricplay/general/ImagePickerExample.dart';
 import 'package:mycricplay/general/ImageUploads.dart';
 import 'package:mycricplay/grounds/groundslist_screen.dart';
@@ -8,14 +12,14 @@ import 'package:mycricplay/schedules/view/schedulelist_screen.dart';
 import 'package:mycricplay/teams/teamslist_screen.dart';
 import 'package:mycricplay/profile/view/ProfileListView.dart';
 
-class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  State<Home> createState() => _HomeState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -33,8 +37,6 @@ class _HomeState extends State<Home> {
       ),
     ];
     return Scaffold(
-
-
       drawer: Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical
@@ -43,11 +45,11 @@ class _HomeState extends State<Home> {
           // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
+            DrawerHeader(
               decoration: BoxDecoration(
                 color: Colors.blue,
               ),
-              child: Text('Madhava Reddy'),
+              child: Text('User email id'),
             ),
             ListTile(
               title: const Text('Profile'),
@@ -117,7 +119,8 @@ class _HomeState extends State<Home> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ImagePickerExample()),
+                  MaterialPageRoute(
+                      builder: (context) => const ImagePickerExample()),
                 );
                 // Update the state of the app.
                 // ...
@@ -126,7 +129,9 @@ class _HomeState extends State<Home> {
             ListTile(
               title: const Text('Sign Out'),
               onTap: () async {
-                await FirebaseAuth.instance.signOut();
+                if (await AuthService().signOutUser()) {
+                  Get.to(() => const LoginScreen());
+                }
 
                 // Update the state of the app.
                 // ...
@@ -135,11 +140,15 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
-      body:
-           Center(child: Container(child: const Text('Welcome',style: TextStyle(fontSize:30),),) //_pages.elementAt(_selectedIndex),
-              ),
+      body: Center(
+          child: Container(
+        child: const Text(
+          'Welcome',
+          style: TextStyle(fontSize: 30),
+        ),
+      ) //_pages.elementAt(_selectedIndex),
+          ),
       appBar: AppBar(
-
         title: const Text('Stockholm Titans'),
       ),
       bottomNavigationBar: BottomNavigationBar(
